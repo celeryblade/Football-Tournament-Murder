@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090909">
+<title>THE LAST MATCH — A Visual Novel</title>
+<style>
+  :root{
+    --bg:#090909; --panel:#111110; --cream:#e7dfd2; --muted:#a69e93;
+    --red:#a91f2c; --line:rgba(231,223,210,.22); --line-soft:rgba(231,223,210,.11);
+    --serif:"Bodoni 72", "Didot", "Bodoni MT", "Times New Roman", serif;
+    --sans:Arial, Helvetica, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--cream);font-family:var(--sans);font-size:14px;line-height:1.6}
+  body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.08;z-index:5;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E")}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+  .site-header{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(22px,5vw,72px);border-bottom:1px solid var(--line-soft);position:relative;z-index:10;background:#090909}
+  .brand{font-family:var(--serif);font-size:25px;letter-spacing:-.08em;line-height:1}
+  .nav{display:flex;gap:clamp(18px,3.2vw,48px);align-items:center}
+  .nav a,.eyebrow,.small-label,.cta,.meta{font-size:9px;letter-spacing:.25em;text-transform:uppercase;font-weight:700}
+  .nav a{color:#bdb5aa;position:relative;padding:9px 0}
+  .nav a:after{content:"";position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--red);transition:width .25s}
+  .nav a:hover:after,.nav a.active:after{width:100%}
+  .nav a.active{color:var(--cream)}
+  .header-note{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+  main{min-height:calc(100vh - 140px)}
+  .page{display:block;animation:fadein .35s ease}
+  @keyframes fadein{from{opacity:.35;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .hero{min-height:500px;position:relative;overflow:hidden;padding:clamp(42px,7vw,100px) clamp(24px,5vw,72px) 54px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1.1fr) minmax(250px,.9fr);gap:32px;align-items:center}
+  .hero:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 75% 42%,rgba(91,91,85,.18),transparent 42%),linear-gradient(115deg,#090909 22%,#10100f 65%,#171615);z-index:-2}
+  .hero:after{content:"";position:absolute;right:-6%;top:-35%;width:55%;height:160%;background:linear-gradient(130deg,transparent 37%,rgba(127,17,28,.16) 38%,rgba(127,17,28,.08) 47%,transparent 48%),linear-gradient(110deg,transparent 45%,rgba(230,220,204,.06) 45.2%,transparent 46%);transform:rotate(-5deg);z-index:-1}
+  .hero-copy{position:relative;z-index:2}
+  .eyebrow{color:var(--muted);margin:0 0 20px}
+  .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(72px,12vw,174px);line-height:.68;letter-spacing:-.075em;text-transform:uppercase;margin:0 0 30px;max-width:800px}
+  .hero h1 span{display:block}
+  .hero h1 .red{color:var(--red);font-style:italic;margin-left:.15em}
+  .slash{position:relative}
+  .slash:after{content:"";position:absolute;left:-8%;top:53%;width:116%;height:2px;background:var(--red);transform:rotate(-17deg);box-shadow:0 0 12px rgba(169,31,44,.2)}
+  .hero-deck{font-family:var(--serif);font-style:italic;font-size:clamp(16px,1.7vw,22px);line-height:1.35;color:#c8bfb3;max-width:390px}
+  .hero-aside{align-self:end;justify-self:end;max-width:245px;margin:0 2% 12px 0}
+  .hero-aside p{font-size:10px;line-height:2.1;letter-spacing:.25em;text-transform:uppercase;color:#c9c1b6}
+  .image-placeholder{background:#000;border:1px solid rgba(231,223,210,.12);display:flex;align-items:center;justify-content:center;color:#77736d;font-size:9px;letter-spacing:.35em;text-transform:uppercase;min-height:160px;position:relative;overflow:hidden}
+  .image-placeholder:after{content:"";position:absolute;inset:8px;border:1px solid rgba(231,223,210,.035);pointer-events:none}
+  .hero-image{min-height:310px;height:100%;max-height:390px;position:relative}
+  .hero-image:before{content:"";position:absolute;inset:0;background:linear-gradient(130deg,transparent 35%,rgba(169,31,44,.12) 36%,transparent 62%);pointer-events:none}
+  .scroll-cue{position:absolute;bottom:25px;right:clamp(24px,5vw,72px);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted)}
+  .section{padding:clamp(42px,6vw,78px) clamp(24px,5vw,72px);border-bottom:1px solid var(--line-soft)}
+  .section-head{display:flex;align-items:center;gap:18px;margin-bottom:30px}
+  .section-number{color:var(--red);font-family:var(--serif);font-size:18px}
+  .section-head .eyebrow{margin:0;white-space:nowrap}
+  .rule{height:1px;background:var(--line);flex:1}
+  .story-grid{display:grid;grid-template-columns:1fr 1.1fr .48fr;gap:clamp(24px,4vw,58px);align-items:center}
+  h2{font-family:var(--serif);font-size:clamp(34px,5vw,66px);line-height:.96;letter-spacing:-.045em;font-weight:400;margin:0 0 22px}
+  h2 em{color:var(--red);font-weight:400}
+  .body-copy{color:#bcb3a8;max-width:430px;font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.5}
+  .story-image{min-height:235px}
+  .side-note{border-left:1px solid var(--line);padding:8px 0 8px 22px}
+  .side-note .symbol{font-family:var(--serif);font-size:42px;color:#b5a894;line-height:1}
+  .side-note p{font-size:9px;letter-spacing:.23em;text-transform:uppercase;line-height:2;color:#c8beb1}
+  .text-link{display:inline-flex;align-items:center;gap:24px;margin-top:18px;padding-bottom:5px;border-bottom:1px solid var(--line);font-size:9px;letter-spacing:.25em;text-transform:uppercase;font-weight:700}
+  .text-link span{font-size:18px;line-height:1}
+  .character-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px 24px}
+  .character-card{display:grid;grid-template-columns:minmax(95px,.8fr) minmax(0,1fr);gap:18px;align-items:start}
+  .character-card .image-placeholder{min-height:170px;aspect-ratio:3/4}
+  .character-card h3{font-family:var(--serif);font-size:21px;line-height:1.05;font-weight:400;text-transform:uppercase;margin:8px 0}
+  .character-card p{font-family:var(--serif);font-style:italic;color:#bdb3a7;font-size:14px;line-height:1.4;margin:10px 0}
+  .character-card .meta{color:var(--muted);font-size:8px}
+  .number{font-family:var(--serif);color:var(--red);font-size:15px}
+  .feature-band{display:grid;grid-template-columns:1.1fr 1fr;min-height:210px;background:#111;align-items:center}
+  .feature-band .statement{padding:38px clamp(24px,5vw,72px)}
+  .feature-band .statement h2{font-size:clamp(38px,6vw,76px);margin:0}
+  .feature-band .statement h2 span{color:var(--red);font-style:italic}
+  .feature-band .image-placeholder{height:100%;min-height:210px;border:0;border-left:1px solid var(--line-soft)}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,6vw,90px);align-items:start}
+  .quote{font-family:var(--serif);font-style:italic;font-size:clamp(25px,3vw,40px);line-height:1.15;color:#d9d0c3}
+  .fact-list{border-top:1px solid var(--line)}
+  .fact{display:grid;grid-template-columns:100px 1fr;gap:20px;padding:17px 0;border-bottom:1px solid var(--line-soft)}
+  .fact .meta{color:var(--muted);padding-top:5px}
+  .fact p{margin:0;color:#c9c0b5;font-family:var(--serif);font-size:16px}
+  .misc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .misc-card{border:1px solid var(--line-soft);padding:22px;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(145deg,#121211,#0a0a0a);transition:border-color .2s,transform .2s}
+  .misc-card:hover{border-color:rgba(169,31,44,.7);transform:translateY(-3px)}
+  .misc-card h3{font-family:var(--serif);font-size:28px;font-weight:400;line-height:1;margin:14px 0}
+  .misc-card p{color:var(--muted);font-family:var(--serif);font-style:italic;margin:0}
+  .misc-card .arrow{align-self:flex-end;font-size:20px;color:var(--red)}
+  .footer{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:25px clamp(24px,5vw,72px);color:var(--muted)}
+  .footer .brand{font-size:19px;color:var(--cream)}
+  .footer p{font-size:8px;letter-spacing:.23em;text-transform:uppercase;margin:0}
+  .mobile-menu{display:none}
+  @media(max-width:850px){
+    .header-note{display:none}.hero{grid-template-columns:1fr;min-height:auto;padding-bottom:70px}.hero-image{min-height:220px;max-height:260px;order:2}.hero-aside{justify-self:start;margin:0;max-width:400px}.hero h1{font-size:clamp(70px,18vw,140px)}
+    .story-grid{grid-template-columns:1fr 1fr}.side-note{grid-column:1/-1;display:flex;align-items:center;gap:20px}.side-note p{margin:0}.character-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .character-card{grid-template-columns:100px 1fr;gap:13px}.character-card .image-placeholder{min-height:140px}
+  }
+  @media(max-width:560px){
+    .site-header{height:auto;min-height:66px;align-items:flex-start;padding-top:18px;padding-bottom:15px;gap:14px}.brand{padding-top:4px}.nav{gap:12px;flex-wrap:wrap;justify-content:flex-end;max-width:75%}.nav a{font-size:8px;letter-spacing:.12em}
+    .hero{padding-top:48px}.hero h1{font-size:clamp(62px,19vw,100px)}.hero-deck{font-size:17px}.story-grid,.two-col{grid-template-columns:1fr}.story-image{min-height:190px}.side-note{grid-column:auto}
+    .character-grid{grid-template-columns:1fr}.character-card{grid-template-columns:110px 1fr}.character-card .image-placeholder{min-height:150px}
+    .feature-band{grid-template-columns:1fr}.feature-band .image-placeholder{min-height:150px;border-left:0;border-top:1px solid var(--line-soft)}.misc-grid{grid-template-columns:1fr}.misc-card{min-height:150px}
+    .footer{align-items:flex-start;flex-direction:column}.fact{grid-template-columns:80px 1fr}
+  }
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.page{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="#home" aria-label="The Last Match home">T<span style="color:var(--red)">/</span>LM</a>
+  <nav class="nav" aria-label="Main navigation">
+    <a href="#home" data-page="home" class="active">Home</a>
+    <a href="#story" data-page="story">Story</a>
+    <a href="#characters" data-page="characters">Characters</a>
+    <a href="#misc" data-page="misc">The Game</a>
+  </nav>
+  <div class="header-note">World Cup · One Death</div>
+</header>
+<main>
+  <section class="page active" id="home" aria-labelledby="home-title">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">WORLD CUP &nbsp;·&nbsp; LUXURY HOTEL &nbsp;·&nbsp; ONE DEATH</p>
+        <h1 id="home-title"><span>The</span><span class="red slash">Last</span><span>Match</span></h1>
+        <p class="hero-deck">A star. A tournament. A question that won't stay buried.</p>
+        <a class="text-link" href="#story">Enter the story <span>⟶</span></a>
+      </div>
+      <div class="hero-image image-placeholder" role="img" aria-label="Image placeholder">Image</div>
+      <div class="hero-aside"><p>Millions watched him play.<br>Only a handful saw him die.<br>Everyone has something to lose.</p></div>
+      <div class="scroll-cue">Scroll &nbsp; ↓</div>
+    </div>
+    <section class="section">
+      <div class="section-head"><span class="section-number">01</span><span class="rule"></span><p class="eyebrow">The premise</p></div>
+      <div class="story-grid">
+        <div><h2>A celebrated star.<br>A locked room.<br><em>A world watching.</em></h2><p class="body-copy">During the World Cup, a football legend is found dead inside a luxury hotel. Behind the spectacle, ambition and obsession are closing in—and the truth is stranger than anyone expects.</p><a class="text-link" href="#story">Discover the story <span>⟶</span></a></div>
+        <div class="story-image image-placeholder" role="img" aria-label="Image placeholder">Image</div>
+        <aside class="side-note"><div class="symbol">✳</div><p>The biggest stage in the world.<br>The smallest room for error.</p></aside>
+      </div>
+    </section>
+    <section class="feature-band">
+      <div class="statement"><p class="eyebrow">A mystery with no clean answers</p><h2>Everyone has<br><span>a secret.</span></h2><a class="text-link" href="#characters">Meet the characters <span>⟶</span></a></div>
+      <div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div>
+    </section>
+    <section class="section">
+      <div class="section-head"><span class="section-number">02</span><span class="rule"></span><p class="eyebrow">Step inside</p></div>
+      <div class="misc-grid">
+        <a class="misc-card" href="#story"><div><span class="meta">01 / Narrative</span><h3>The night<br>everything changed</h3><p>One death. Too many versions of the truth.</p></div><span class="arrow">↗</span></a>
+        <a class="misc-card" href="#characters"><div><span class="meta">02 / Cast</span><h3>Know their<br>faces. Doubt them all.</h3><p>Every relationship hides another story.</p></div><span class="arrow">↗</span></a>
+        <a class="misc-card" href="#misc"><div><span class="meta">03 / The experience</span><h3>Your choices<br>leave a mark.</h3><p>Follow the clues. Decide what to believe.</p></div><span class="arrow">↗</span></a>
+      </div>
+    </section>
+  </section>
+
+  <section class="page" id="story" aria-labelledby="story-title">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">A tournament in the spotlight. A death behind closed doors.</p>
+        <h1 id="story-title"><span>One</span><span class="red slash">Dead</span><span>Man.</span></h1>
+        <p class="hero-deck">The world knows his name. Nobody agrees on what happened.</p>
+        <a class="text-link" href="#story-details">Uncover the truth <span>⟶</span></a>
+      </div>
+      <div class="hero-image image-placeholder" role="img" aria-label="Image placeholder">Image</div>
+      <div class="hero-aside"><p>THE NIGHT BEFORE THE FINAL<br>HOTEL SUITE 1706<br>NO FORCED ENTRY</p></div>
+    </div>
+    <section class="section" id="story-details">
+      <div class="section-head"><span class="section-number">01</span><span class="rule"></span><p class="eyebrow">The story</p></div>
+      <div class="two-col">
+        <div><h2>Fame makes<br>everything public.<br><em>Death makes it personal.</em></h2><p class="body-copy">At the height of the World Cup, the tournament's most celebrated player is discovered dead in a private suite at an exclusive hotel. The corridors are sealed. The guests are questioned. The world waits for a simple explanation.</p><p class="body-copy">But behind polished smiles and carefully rehearsed statements, a web of rivalries, private loyalties, and inexplicable events begins to surface. The closer you get to the truth, the less certain reality becomes.</p></div>
+        <div class="image-placeholder" style="min-height:340px" role="img" aria-label="Image placeholder">Image</div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head"><span class="section-number">02</span><span class="rule"></span><p class="eyebrow">The questions</p></div>
+      <div class="fact-list">
+        <div class="fact"><span class="meta">THE VICTIM</span><p>What could make the world's most adored footballer afraid of his own shadow?</p></div>
+        <div class="fact"><span class="meta">THE HOTEL</span><p>Why do the staff insist that nobody entered the suite—when the elevator tells another story?</p></div>
+        <div class="fact"><span class="meta">THE WITNESSES</span><p>Who is protecting the truth, and who is protecting something much worse?</p></div>
+        <div class="fact"><span class="meta">THE UNKNOWN</span><p>What if the impossible explanation is the only one that fits?</p></div>
+      </div>
+    </section>
+    <section class="feature-band"><div class="statement"><p class="eyebrow">Nothing stays buried forever</p><h2>The truth is<br><span>in play.</span></h2><a class="text-link" href="#characters">Meet the suspects <span>⟶</span></a></div><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div></section>
+  </section>
+
+  <section class="page" id="characters" aria-labelledby="characters-title">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Six lives. One fatal night.</p>
+        <h1 id="characters-title"><span>The</span><span class="red slash">Cast</span></h1>
+        <p class="hero-deck">They shared a hotel. They shared a secret. They remember the night differently.</p>
+      </div>
+      <div class="hero-image image-placeholder" role="img" aria-label="Image placeholder">Image</div>
+      <div class="hero-aside"><p>ONE VICTIM<br>NO PERFECT ALIBIS<br>CHOOSE WHO TO TRUST</p></div>
+    </div>
+    <section class="section">
+      <div class="section-head"><span class="section-number">01</span><span class="rule"></span><p class="eyebrow">People of interest</p></div>
+      <div class="character-grid">
+        <article class="character-card"><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div><div><span class="number">01 / 06</span><h3>The Star</h3><span class="meta">The victim · Football icon</span><p>He had the world at his feet. So why was he planning to disappear?</p></div></article>
+        <article class="character-card"><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div><div><span class="number">02 / 06</span><h3>The Agent</h3><span class="meta">Business partner</span><p>Every contract had a clause. Every friendship had a price.</p></div></article>
+        <article class="character-card"><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div><div><span class="number">03 / 06</span><h3>The Coach</h3><span class="meta">Team leadership</span><p>He built a winning team—and knows what it costs to keep one together.</p></div></article>
+        <article class="character-card"><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div><div><span class="number">04 / 06</span><h3>The Lover</h3><span class="meta">Private connection</span><p>They knew the person behind the legend. Or thought they did.</p></div></article>
+        <article class="character-card"><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div><div><span class="number">05 / 06</span><h3>The Manager</h3><span class="meta">Hotel management</span><p>Nothing happens in this hotel without his knowledge. Almost nothing.</p></div></article>
+        <article class="character-card"><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div><div><span class="number">06 / 06</span><h3>The Detective</h3><span class="meta">Lead investigator</span><p>They came for a murder inquiry. They may have found something else.</p></div></article>
+      </div>
+    </section>
+    <section class="feature-band"><div class="statement"><p class="eyebrow">Read between the lines</p><h2>Everyone has<br><span>a secret.</span></h2><a class="text-link" href="#story">Return to the story <span>⟶</span></a></div><div class="image-placeholder" role="img" aria-label="Image placeholder">Image</div></section>
+  </section>
+
+  <section class="page" id="misc" aria-labelledby="misc-title">
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">An interactive supernatural mystery</p>
+        <h1 id="misc-title"><span>Enter</span><span class="red slash">The</span><span>Game.</span></h1>
+        <p class="hero-deck">Follow the evidence. Question every witness. Decide which version of the truth survives.</p>
+        <a class="text-link" href="#experience">Explore the experience <span>⟶</span></a>
+      </div>
+      <div class="hero-image image-placeholder" role="img" aria-label="Image placeholder">Image</div>
+      <div class="hero-aside"><p>YOUR CHOICES MATTER<br>NOTHING IS QUITE WHAT IT SEEMS</p></div>
+    </div>
+    <section class="section" id="experience">
+      <div class="section-head"><span class="section-number">01</span><span class="rule"></span><p class="eyebrow">The experience</p></div>
+      <div class="two-col">
+        <div><h2>A match watched<br>by millions.<br><em>A truth seen by you.</em></h2><p class="body-copy">A narrative-driven visual novel blending investigative choices, complicated relationships, and supernatural horror. Explore the hotel, connect conflicting accounts, and decide whom to trust as the boundaries of the possible begin to collapse.</p></div>
+        <div class="fact-list">
+          <div class="fact"><span class="meta">GENRE</span><p>Adventure · Supernatural horror · Whodunit</p></div>
+          <div class="fact"><span class="meta">SETTING</span><p>The World Cup, inside a luxury hotel</p></div>
+          <div class="fact"><span class="meta">PLAY</span><p>Investigate, make choices, and uncover hidden connections</p></div>
+          <div class="fact"><span class="meta">STATUS</span><p>Coming soon</p></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head"><span class="section-number">02</span><span class="rule"></span><p class="eyebrow">More to discover</p></div>
+      <div class="misc-grid">
+        <a class="misc-card" href="#story"><div><span class="meta">01 / Premise</span><h3>The story</h3><p>One death sets the whole world in motion.</p></div><span class="arrow">↗</span></a>
+        <a class="misc-card" href="#characters"><div><span class="meta">02 / People</span><h3>The characters</h3><p>Everyone has a reason to lie.</p></div><span class="arrow">↗</span></a>
+        <a class="misc-card" href="#home"><div><span class="meta">03 / Return</span><h3>The beginning</h3><p>Every mystery starts somewhere.</p></div><span class="arrow">↗</span></a>
+      </div>
+    </section>
+  </section>
+</main>
+<footer class="footer"><a class="brand" href="#home">THE <span style="color:var(--red)">LAST</span> MATCH</a><p>A supernatural visual novel · Coming soon</p><p>Some truths stay buried.</p></footer>
+<script>
+  // The four sections are visible by default. Navigation uses ordinary
+  // in-page anchors, so it also works in simple HTML previews.
+  document.querySelectorAll('.nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('.nav a').forEach(item => {
+        item.classList.toggle('active', item === link);
+      });
+    });
+  });
+</script>
+</body>
+</html>
